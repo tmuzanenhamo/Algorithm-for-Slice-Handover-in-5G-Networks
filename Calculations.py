@@ -289,7 +289,7 @@ class InterCalculations(IntraCalculations):
                                                 bbuN + bbuN * newC > cls.new_thresh and bbuNU + bbuNU * (
                                                 newCU + handCU) > cls.uRLLC_capacity or \
                                                 bbuNU + bbuNU * newCU > cls.uRLLC_newcall_thresh:
-                                            G1[j] = G1[j] + qn[j] * qh[j] + qn_1[j] * qh_1[j]
+                                            G1[j] = G1[j] + qn[j] * qh[j] * qn_1[j] * qh_1[j]
                                             # g += 1
                                         if bbuN + bbuN * (newC + handC) > cls.capacity or \
                                                 bbuN + bbuN * handC > cls.handoff_thresh and \

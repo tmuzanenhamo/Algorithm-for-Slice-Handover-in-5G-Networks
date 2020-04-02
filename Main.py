@@ -110,7 +110,7 @@ class Simulator:
         # fig = plt.figure()
         for data in [data_set.reset_index(), data_set2.reset_index()]:
             plt.plot(data['index'], data['eMBB'])
-        #     plt.legend(['Intra'], ['Inter'])
+        # #     plt.legend(['Intra'], ['Inter'])
         plt.show()
 
         # ax = data_set.plot()
@@ -119,17 +119,18 @@ class Simulator:
         # plt.show()
 
         #
-        for dropping in [dropping_data.reset_index(), dropping2_data.reset_index() ]:
-            plt.plot(dropping['index'], dropping['eMBB'])
-        plt.show()
-        # # print(data_set)
-        # print(dropping2_data)
+        # for dropping in [dropping_data.reset_index(), dropping2_data.reset_index() ]:
+        #     plt.plot(dropping['index'], dropping['eMBB'])
+        # plt.show()
+        # print(data_set['eMBB'])
+        # print(data_set2['eMBB'])
         # print(dropping_data>dropping2_data)
         # print(dropping2_data>dropping_data)
         # print(data_set['mMTC'])
         #
         # print(data_set2['mMTC'])
-        print(data_set2['mMTC']>data_set['mMTC'])
+        print(data_set['eMBB'])
+        print(data_set2['eMBB']>data_set['eMBB'])
 
         # print(data_set2)
         # data_set
