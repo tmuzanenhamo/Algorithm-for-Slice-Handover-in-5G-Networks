@@ -56,7 +56,7 @@ class IntraCalculations:
         G2 = np.zeros(10)
         G3 = np.zeros(10)
         # New Call arrival rates
-        callA = np.arange(1, 11, 1)  # eMBB, uRLLC, mMTC
+        callA = np.arange(2, 7, .5)  # eMBB, uRLLC, mMTC
         # Handoff Call Arrival rates
         handA = (callA * cls.handoff_rate) / 0.5
         # Initialise Available Bandwidth
@@ -420,7 +420,7 @@ class InterCalculations(IntraCalculations):
                                                     ((bbuNM + bbuN * (
                                                             newCE + handCE) + bbuNM * newCM > cls.eMBB_capacity)
                                                      or (
-                                                             bbuNM + bbuN * newCE + bbuNM * newCM > cls.eMBB_newcall_thresh)):
+                                                    bbuNM + bbuN * newCE + bbuNM * newCM > cls.eMBB_newcall_thresh)):
                                                 G1[j] = G1[j] + qn[j] + qh[j] + qh_1[j] + qn_1[j] + qn_2[j]
 
             blocking_prob = cls.probabilities(G1, G)
@@ -494,20 +494,18 @@ class InterCalculations(IntraCalculations):
                                                 (bbuN + bbuN * newCE + bbuNM * newCM > cls.new_thresh)) and \
                                                     ((bbuN + bbuNU * (newCU + handCU) + bbuN * (newCE + handCE) +
                                                       bbuNM * newCM > cls.uRLLC_capacity) or
-                                                     (
-                                                             bbuN + bbuNU * newCU + bbuN * newCE + bbuNM * newCM > cls.uRLLC_newcall_thresh)):
+                                                     (bbuN + bbuNU * newCU + bbuN * newCE +
+                                                      bbuNM * newCM > cls.uRLLC_newcall_thresh)):
                                                 G1[j] = G1[j] + qn[j] + qh[j] + qh_1[j] + qn_1[j] + qn_2[j]
 
                                             if (bbuN + bbuNU * (newCU + handCU) + bbuN * (newCE + handCE) +
                                                 bbuNM * newCM > cls.uRLLC_capacity) and \
                                                     (bbuN + bbuN * (newCE + handCE) + bbuNM * newCM > cls.capacity):
                                                 G2[j] = G2[j] + qn[j] + qh[j] + qh_1[j] + qn_1[j] + qn_2[j]
-                                                print('Hie')
 
             blocking_prob = cls.probabilities(G1, G)
             dropping_prob = cls.probabilities(G2, G)
             return slice_name, blocking_prob, dropping_prob
-
 
         elif slice_name == 'uRLLC':
             required_bbu = UseCases()
@@ -573,17 +571,16 @@ class InterCalculations(IntraCalculations):
                                             G[j] = G[j] + (qn[j] + qh[j] + qh_1[j] + qn_1[j] + qn_2[j])
 
                                             if (bbuNU + bbuNU * (newCU + handCU) + bbuNE * (newCE + handCE) +
-                                                bbuNM * newCM > cls.capacity) and\
-                                                (bbuNU + bbuNU * newCU + bbuNM * newCM + bbuNE * newCE > cls.new_thresh):
+                                                bbuNM * newCM > cls.capacity) and \
+                                                    (
+                                                     bbuNU + bbuNU * newCU + bbuNM * newCM +
+                                                     bbuNE * newCE > cls.new_thresh):
                                                 G1[j] = G1[j] + qn[j] + qh[j] + qh_1[j] + qn_1[j] + qn_2[j]
 
                                             if bbuNU + bbuNU * (newCU + handCU) + bbuNE * (newCE + handCE) + \
                                                     bbuNM * newCM > cls.capacity:
                                                 G2[j] = G2[j] + qn[j] + qh[j] + qh_1[j] + qn_1[j] + qn_2[j]
 
-
             blocking_prob = cls.probabilities(G1, G)
             dropping_prob = cls.probabilities(G2, G)
             return slice_name, blocking_prob, dropping_prob
-
-
