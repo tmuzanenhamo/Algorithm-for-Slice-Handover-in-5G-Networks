@@ -228,7 +228,6 @@ class IntraCalculations:
                                                 G2[j] = G2[j] + qn[j] + qh[j] + qh_1[j] + qn_1[j] + qn_2[j]
 
             # return the probabilities
-            print(e)
             blocking_prob = cls.probabilities(G1, G)
             dropping_prob = cls.probabilities(G2, G)
             return slice_name, blocking_prob, dropping_prob
@@ -300,7 +299,6 @@ class IntraCalculations:
 
             # return the probabilities
             blocking_prob = cls.probabilities(G1, G)
-            print(k)
             return slice_name, blocking_prob
 
 
