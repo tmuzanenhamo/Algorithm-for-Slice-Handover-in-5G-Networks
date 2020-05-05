@@ -57,16 +57,9 @@ class Simulator:
 
             if choice == 1:
                 algorithm = 'Intra'
-                print('Implementing Intra Slice handover\n')
                 calc = IntraCalculations()
-                # m = calc.calculations('mMTC', slice_type['mMTC'])
-                # # # # d = calc.calculations('mMTC', slice_type['mMTC'])
-                # self.data_dict.update({'mMTC': m[1]})
-                # # # # print(self.data_dict)
-                # data_set = pd.DataFrame(self.data_dict, index= np.arange(1,11,1))
-                # print(data_set)
+                print('Implementing Intra Slice handover\n')
                 algorithm = 'Intra'
-                # slice_type = ['eMBB', 'uRLLC', 'mMTC']
                 for key in slice_type:
                     if key == 'eMBB' or key == 'uRLLC':
                         probabilities = calc.calculations(key, slice_type[key])
@@ -78,6 +71,7 @@ class Simulator:
                     else:
                         probabilities = calc.calculations(key, slice_type[key])
                         print(f'The blocking probability for {probabilities[0]} slice is: {probabilities[1]} \n')
+                        print('******************************************************************************\n')
                         self.data_dict.update({key: probabilities[1]})
                 data_set = pd.DataFrame(self.data_dict, index=np.arange(2, 7, .5))
                 dropping_data = pd.DataFrame(self.dropping_dict, index=np.arange(2, 7, .5))
@@ -90,17 +84,8 @@ class Simulator:
 
             else:
                 print()
-                print('Implementing Inter Slice handover\n')
                 calc = InterCalculations()
-                # d = calc.calculations('uRLLC', slice_type['uRLLC'])
-                # self.data2_dict.update({'uRLLC': d[2]})
-                # # # # print(self.data2_dict)
-                # data_set2 = pd.DataFrame(self.data2_dict, index=np.arange(2, 7, .5))
-                # print(self.data2_dict)
-                # # print(f"The blocking probabilities for  {d[0]} are {d[1]}")
-                # # print(f"The dropping probabilities for  {d[0]} are {d[2]}")
                 algorithm = 'Inter'
-                # slice_type = ['eMBB', 'uRLLC', 'mMTC']
                 for key in slice_type:
                     if key == 'eMBB' or key == 'uRLLC':
                         probabilities = calc.calculations(key, slice_type[key])
@@ -112,6 +97,7 @@ class Simulator:
                     else:
                         probabilities = calc.calculations(key, slice_type[key])
                         print(f'The blocking probability for {probabilities[0]} slice is: {probabilities[1]} \n')
+                        print('******************************************************************************\n')
                         self.data2_dict.update({key: probabilities[1]})
                 data_set2 = pd.DataFrame(self.data2_dict, index=np.arange(2, 7, 0.5))
                 dropping2_data = pd.DataFrame(self.dropping2_dict, index=np.arange(2, 7, 0.5))
@@ -124,9 +110,9 @@ class Simulator:
             choice += 1
 
         # # fig = plt.figure()
-        # for data in [data_set2.reset_index()]:
-        #             plt.plot(data['index'], data['uRLLC'])
-        # plt.show()
+        for data in [data_set.reset_index()]:
+                     plt.plot(data['index'], data['mMTC'])
+        plt.show()
         #
         # # ax = data_set.plot()
         # # m = ax.get_lines()
@@ -156,10 +142,11 @@ class Simulator:
         # # data_set.plot(y=['mMTC',m], use_index=True, kind='bar')
         # # plt.show()
         #
-        # df = pd.merge(data_set.reset_index(), data_set2.reset_index(), on='index', suffixes=('_intra', '_inter'))
-        # print(df)
-        # writer = ExcelWriter('All_Blocking_probabilities.xlsx')
-        # df.to_excel(writer, sheet_name='Sheet1')
+        df = pd.merge(data_set.reset_index(), data_set2.reset_index(), on='index', suffixes=('_intra', '_inter'))
+        print(df)
+        writer = ExcelWriter('All_Blocking_probabilities.xlsx')
+        df.to_excel(writer, sheet_name='Sheet1')
+        writer.save()
         #
         # # # df.plot.bar(x='index')
         # # # data_set.plot(y=['mMTC'], use_index=True)

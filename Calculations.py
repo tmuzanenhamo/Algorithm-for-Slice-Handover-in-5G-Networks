@@ -23,7 +23,7 @@ class IntraCalculations:
     uRLLC_handoff_thresh_inter = 0
 
     def __init__(self):
-        print('Calculations started\n')
+        print('Implementing Intra Slice Handover Algorithm\n')
 
     @classmethod
     def factorial(cls, num):
@@ -56,7 +56,7 @@ class IntraCalculations:
         G2 = np.zeros(10)
         G3 = np.zeros(10)
         # New Call arrival rates
-        callA = np.arange(2, 7, .5)  # eMBB, uRLLC, mMTC
+        callA = np.arange(4, 9, .5)  # eMBB, uRLLC, mMTC
         # Handoff Call Arrival rates
         handA = (callA * cls.handoff_rate) / 0.5
         # Initialise Available Bandwidth
@@ -94,11 +94,11 @@ class IntraCalculations:
             cls.mMTC_capacity = params[0]
 
             # Available bandwidth
-            newB *= (cls.capacity / (cls.capacity * 3)) * callA
-            handB *= (cls.capacity / (cls.capacity * 3)) * handA
-            newBM *= (cls.mMTC_capacity / (cls.mMTC_capacity * 3)) * callA
-            newBU *= (cls.uRLLC_capacity / (cls.uRLLC_capacity * 3)) * callA
-            handBU *= (cls.uRLLC_capacity / (cls.uRLLC_capacity * 3)) * handA
+            newB *= (cls.capacity / cls.capacity) * callA
+            handB *= (cls.capacity / cls.capacity) * handA
+            newBM *= (cls.mMTC_capacity / cls.mMTC_capacity) * callA
+            newBU *= (cls.uRLLC_capacity / cls.uRLLC_capacity) * callA
+            handBU *= (cls.uRLLC_capacity / cls.uRLLC_capacity) * handA
 
             # Load at each slice
             newL *= newB / cls.holding_time1
@@ -171,11 +171,11 @@ class IntraCalculations:
             cls.mMTC_capacity = params[0] - 15
 
             # Available bandwidth
-            newB *= (cls.capacity / (cls.capacity * 3)) * callA
-            handB *= (cls.capacity / (cls.capacity * 3)) * handA
-            newBM *= (cls.mMTC_capacity / (cls.mMTC_capacity * 3)) * callA
-            newBE *= (cls.eMBB_capacity / (cls.eMBB_capacity * 3)) * callA
-            handBE *= (cls.eMBB_capacity / (cls.eMBB_capacity * 3)) * handA
+            newB *= (cls.capacity / cls.capacity) * callA
+            handB *= (cls.capacity / cls.capacity) * handA
+            newBM *= (cls.mMTC_capacity / cls.mMTC_capacity) * callA
+            newBE *= (cls.eMBB_capacity / cls.eMBB_capacity) * callA
+            handBE *= (cls.eMBB_capacity / cls.eMBB_capacity) * handA
 
             # Load at each slice
             newL *= newB / cls.holding_time1
@@ -248,11 +248,11 @@ class IntraCalculations:
             cls.mMTC_capacity = params[0]
 
             # Available bandwidth
-            newB *= (cls.uRLLC_capacity / (cls.uRLLC_capacity * 3)) * callA
-            handB *= (cls.uRLLC_capacity / (cls.uRLLC_capacity * 3)) * handA
-            newBM *= (cls.mMTC_capacity / (cls.mMTC_capacity * 3)) * callA
-            newBE *= (cls.eMBB_capacity / (cls.eMBB_capacity * 3)) * callA
-            handBE *= (cls.eMBB_capacity / (cls.eMBB_capacity * 3)) * handA
+            newB *= (cls.uRLLC_capacity / (cls.uRLLC_capacity )) * callA
+            handB *= (cls.uRLLC_capacity / (cls.uRLLC_capacity )) * handA
+            newBM *= (cls.mMTC_capacity / (cls.mMTC_capacity )) * callA
+            newBE *= (cls.eMBB_capacity / (cls.eMBB_capacity )) * callA
+            handBE *= (cls.eMBB_capacity / (cls.eMBB_capacity )) * handA
 
             # Load at each slice
             newL *= newB / cls.holding_time1
@@ -291,10 +291,10 @@ class IntraCalculations:
                                             qh_1[j] = pow(handLE[j], handCE) / cls.factorial(handCE)
                                             qn_2[j] = pow(newLM[j], newCM) / cls.factorial(newCM)
                                             # Normalisation Constant
-                                            G[j] = G[j] + qn[j] + qn_1[j] + qn_2[j] + qh_1[j] + qh[j]
+                                            G[j] = G[j] + qn_2[j] + qn_1[j] + qn[j] + qh[j] + qh_1[j]
 
                                             if bbuNM + bbuNM * newCM > cls.mMTC_capacity:
-                                                G1[j] = G1[j] + qn[j] + qn_1[j] + qn_2[j] + qh_1[j] + qh[j]
+                                                G1[j] = G1[j] + qn_2[j] + qn_1[j] + qn[j] + qh[j] + qh_1[j]
                                                 k += 1
 
             # return the probabilities
@@ -325,7 +325,7 @@ class InterCalculations(IntraCalculations):
         G2 = np.zeros(10)
         G3 = np.zeros(10)
         # New Call arrival rates
-        callA = np.arange(2, 7, .5)  # eMBB, uRLLC, mMTC
+        callA = np.arange(4,9,.5)  # eMBB, uRLLC, mMTC
         # Handoff Call Arrival rates
         handA = (callA * cls.handoff_rate) / 0.5
         # Initialise Available Bandwidth
@@ -352,7 +352,7 @@ class InterCalculations(IntraCalculations):
             bbuHE = required_bbu.allocate_bbu('eMBB')[1]  # handoff call bbu
             bbuNU = required_bbu.allocate_bbu('uRLLC')[0]
             bbuHU = required_bbu.allocate_bbu('uRLLC')[1]
-            bbuNM = required_bbu.allocate_bbu('mMTC')
+            bbuNM = required_bbu.allocate_bbu(slice_name)
 
             cls.capacity = params[0]
             cls.new_thresh = params[1]
@@ -371,7 +371,7 @@ class InterCalculations(IntraCalculations):
             handBU *= (cls.uRLLC_capacity / cls.uRLLC_capacity) * handA
 
             # Load at each slice
-            newL *= newB / cls.holding_time1
+            newLM *= newB / cls.holding_time1
             newLU *= newBU / cls.holding_time1
             handLU *= handBU / cls.holding_time2
             newLE *= newBE / cls.holding_time1
@@ -399,7 +399,6 @@ class InterCalculations(IntraCalculations):
                                             bbuNM * newCM <= cls.capacity) and (
                                             bbuN * newCE + bbuNU * newCU + bbuNM * newCM <= cls.uRLLC_newcall_thresh) and (
                                             bbuNM * newCM + bbuN * newCE <= cls.eMBB_newcall_thresh):
-                                        n += 1
 
                                         for j in range(10):
                                             qn[j] = pow(newLU[j], newCU) / cls.factorial(newCU)
@@ -408,12 +407,12 @@ class InterCalculations(IntraCalculations):
                                             qh_1[j] = pow(handLE[j], handCE) / cls.factorial(handCE)
                                             qn_2[j] = pow(newLM[j], newCM) / cls.factorial(newCM)
                                             # Normalisation Constant
-                                            G[j] = G[j] + (qn[j] + qh[j] + qh_1[j] + qn_1[j] + qn_2[j])
+                                            G[j] = G[j] + qn[j] + qh[j] + qh_1[j] + qn_1[j] + qn_2[j]
 
                                             if (bbuNM + bbuNM * newCM > cls.capacity) and \
                                                     ((bbuNM + bbuNU * (newCU + handCU) + bbuN * (newCE + handCE) +
                                                       bbuNM * newCM > cls.uRLLC_capacity) or
-                                                     (bbuNM + bbuNU * newCU + bbuNM * newCM + bbuN * newCE +
+                                                     (bbuNM + bbuNU * newCU + bbuN * newCE +
                                                       bbuNM * newCM > cls.uRLLC_newcall_thresh)) and \
                                                     ((bbuNM + bbuN * (
                                                             newCE + handCE) + bbuNM * newCM > cls.eMBB_capacity)
@@ -422,7 +421,7 @@ class InterCalculations(IntraCalculations):
                                                 G1[j] = G1[j] + qn[j] + qh[j] + qh_1[j] + qn_1[j] + qn_2[j]
 
             blocking_prob = cls.probabilities(G1, G)
-            return slice_name, blocking_prob[::-1]
+            return slice_name, blocking_prob
 
         elif slice_name == 'eMBB':
 
@@ -444,8 +443,8 @@ class InterCalculations(IntraCalculations):
             # Available bandwidth
             newBM *= (cls.mMTC_capacity / cls.mMTC_capacity) * callA
             newBU *= (cls.uRLLC_capacity / cls.uRLLC_capacity) * callA
-            newBE *= (cls.eMBB_capacity / cls.eMBB_capacity) * callA
-            handBE *= (cls.eMBB_capacity / cls.eMBB_capacity) * handA
+            newBE *= (cls.capacity / cls.capacity) * callA
+            handBE *= (cls.capacity / cls.capacity) * handA
             handBU *= (cls.uRLLC_capacity / cls.uRLLC_capacity) * handA
 
             # Load at each slice

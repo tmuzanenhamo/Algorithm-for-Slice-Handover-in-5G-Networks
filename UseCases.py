@@ -2,8 +2,8 @@ class UseCases:
     bbuV = 3
     bbuS = 2
     bbuA = 2
-    bbuAh = 3
-    bbuVh = 4
+    bbuAh = 2
+    bbuVh = 3
 
     @classmethod
     def allocate_bbu(cls, names):
