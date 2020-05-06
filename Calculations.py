@@ -23,7 +23,7 @@ class IntraCalculations:
     uRLLC_handoff_thresh_inter = 0
 
     def __init__(self):
-        print('Implementing Intra Slice Handover Algorithm\n')
+        print('Intra Slice Handover Calculations Started\n')
 
     @classmethod
     def factorial(cls, num):
@@ -56,7 +56,7 @@ class IntraCalculations:
         G2 = np.zeros(10)
         G3 = np.zeros(10)
         # New Call arrival rates
-        callA = np.arange(4, 9, .5)  # eMBB, uRLLC, mMTC
+        callA = np.arange(3, 8, .5)  # eMBB, uRLLC, mMTC
         # Handoff Call Arrival rates
         handA = (callA * cls.handoff_rate) / 0.5
         # Initialise Available Bandwidth
@@ -248,11 +248,11 @@ class IntraCalculations:
             cls.mMTC_capacity = params[0]
 
             # Available bandwidth
-            newB *= (cls.uRLLC_capacity / (cls.uRLLC_capacity )) * callA
-            handB *= (cls.uRLLC_capacity / (cls.uRLLC_capacity )) * handA
-            newBM *= (cls.mMTC_capacity / (cls.mMTC_capacity )) * callA
-            newBE *= (cls.eMBB_capacity / (cls.eMBB_capacity )) * callA
-            handBE *= (cls.eMBB_capacity / (cls.eMBB_capacity )) * handA
+            newB *= (cls.uRLLC_capacity / (cls.uRLLC_capacity)) * callA
+            handB *= (cls.uRLLC_capacity / (cls.uRLLC_capacity)) * handA
+            newBM *= (cls.mMTC_capacity / (cls.mMTC_capacity)) * callA
+            newBE *= (cls.eMBB_capacity / (cls.eMBB_capacity)) * callA
+            handBE *= (cls.eMBB_capacity / (cls.eMBB_capacity)) * handA
 
             # Load at each slice
             newL *= newB / cls.holding_time1
@@ -325,7 +325,7 @@ class InterCalculations(IntraCalculations):
         G2 = np.zeros(10)
         G3 = np.zeros(10)
         # New Call arrival rates
-        callA = np.arange(4,9,.5)  # eMBB, uRLLC, mMTC
+        callA = np.arange(3, 8, .5)  # eMBB, uRLLC, mMTC
         # Handoff Call Arrival rates
         handA = (callA * cls.handoff_rate) / 0.5
         # Initialise Available Bandwidth
@@ -417,7 +417,7 @@ class InterCalculations(IntraCalculations):
                                                     ((bbuNM + bbuN * (
                                                             newCE + handCE) + bbuNM * newCM > cls.eMBB_capacity)
                                                      or (
-                                                    bbuNM + bbuN * newCE + bbuNM * newCM > cls.eMBB_newcall_thresh)):
+                                                             bbuNM + bbuN * newCE + bbuNM * newCM > cls.eMBB_newcall_thresh)):
                                                 G1[j] = G1[j] + qn[j] + qh[j] + qh_1[j] + qn_1[j] + qn_2[j]
 
             blocking_prob = cls.probabilities(G1, G)
@@ -565,17 +565,17 @@ class InterCalculations(IntraCalculations):
                                             qh_1[j] = pow(handLE[j], handCE) / cls.factorial(handCE)
                                             qn_2[j] = pow(newLM[j], newCM) / cls.factorial(newCM)
                                             # Normalisation Constant
-                                            G[j] = G[j] + (qn[j] + qh[j] + qh_1[j] + qn_1[j] + qn_2[j])
+                                            G[j] = G[j] + qn[j] + qh[j] + qh_1[j] + qn_1[j] + qn_2[j]
 
                                             if (bbuNU + bbuNU * (newCU + handCU) + bbuNE * (newCE + handCE) +
-                                                bbuNM * newCM > cls.capacity) and \
+                                                bbuNM * newCM > cls.capacity) or \
                                                     (
-                                                     bbuNU + bbuNU * newCU + bbuNM * newCM +
-                                                     bbuNE * newCE > cls.new_thresh):
+                                                            bbuNU + bbuNU * newCU + bbuNM * newCM +
+                                                            bbuNE * newCE > cls.new_thresh):
                                                 G1[j] = G1[j] + qn[j] + qh[j] + qh_1[j] + qn_1[j] + qn_2[j]
 
-                                            if bbuNU + bbuNU * (newCU + handCU) + bbuNE * (newCE + handCE) + \
-                                                    bbuNM * newCM > cls.capacity:
+                                            if (bbuNU + bbuNU * (newCU + handCU) + bbuNE * (newCE + handCE) +
+                                                    bbuNM * newCM > cls.capacity):
                                                 G2[j] = G2[j] + qn[j] + qh[j] + qh_1[j] + qn_1[j] + qn_2[j]
 
             blocking_prob = cls.probabilities(G1, G)

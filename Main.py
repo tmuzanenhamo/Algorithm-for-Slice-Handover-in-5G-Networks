@@ -44,120 +44,247 @@ class Simulator:
         bbu = useCase.allocate_bbu(slice_name)
         return bbu
 
+    @staticmethod
+    def plot_graphs(algorithm, df):
+
+        print(f'Plotting {algorithm} Slice Handover Algorithms\n')
+        fig1 = plt.figure(1)
+        plt.plot(df['index'], df['eMBB_BP'])
+        plt.xlabel('Call Arrival Rate')
+        plt.ylabel('Call Blocking Probabilty')
+        plt.title(f'eMBB Slice {algorithm} Slice')
+        plt.savefig(f'{algorithm} Slice eMBB blocking Probability')
+        fig2 = plt.figure(2)
+        plt.plot(df['index'], df['eMBB_DP'])
+        plt.xlabel('Call Arrival Rate')
+        plt.ylabel('Call Dropping Probabilty')
+        plt.title(f'eMBB Slice {algorithm} Slice')
+        plt.savefig(f'{algorithm} Slice eMBB dropping Probability')
+        fig2 = plt.figure(3)
+        plt.plot(df['index'], df['mMTC'])
+        plt.xlabel('Call Arrival Rate')
+        plt.ylabel('Call Blocking Probabilty')
+        plt.title(f'mMTC Slice {algorithm} Slice')
+        plt.savefig(f'{algorithm} Slice mMTC blocking Probability')
+        fig2 = plt.figure(4)
+        plt.plot(df['index'], df['uRLLC_BP'])
+        plt.xlabel('Call Arrival Rate')
+        plt.ylabel('Call Blocking Probabilty')
+        plt.title(f'uRLLC Slice {algorithm} Slice')
+        plt.savefig(f'{algorithm} Slice uRLLC blocking Probability')
+        fig2 = plt.figure(5)
+        plt.plot(df['index'], df['uRLLC_DP'])
+        plt.xlabel('Call Arrival Rate')
+        plt.ylabel('Call Dropping Probabilty Intra Slice')
+        plt.title(f'uRLLC Slice {algorithm} Slice')
+        plt.savefig(f'{algorithm} Slice uRLLC dropping Probability')
+        plt.show()
+
     @property
     def execute(self):
         slice_type = self.initialise_slices
 
+        # Choose Algorithm to Simulate.
         print('Choose the type of handover you want to simulate: ')
         print('1. Intra Slice handover')
         print('2. Inter Slice handover')
 
-        choice = 1
-        while choice < 3:
+        choice = eval(input("Enter your choice: "))
+        if choice == 1:
+            print('Simulating Intra Slice handover\n')
+            calc = IntraCalculations()
+            algorithm = 'Intra'
+            for key in slice_type:
+                if key == 'eMBB' or key == 'uRLLC':
+                    probabilities = calc.calculations(key, slice_type[key])
+                    print(f'The blocking probability for {probabilities[0]} slice is: {probabilities[1]} \n')
+                    print(f'The dropping probability for {probabilities[0]} slice is: {probabilities[2]} \n')
+                    print('******************************************************************************\n')
+                    self.data_dict.update({key: probabilities[1]})
+                    self.dropping_dict.update({key: probabilities[2]})
+                else:
+                    probabilities = calc.calculations(key, slice_type[key])
+                    print(f'The blocking probability for {probabilities[0]} slice is: {probabilities[1]} \n')
+                    print('******************************************************************************\n')
+                    self.data_dict.update({key: probabilities[1]})
+            data_set = pd.DataFrame(self.data_dict, index=np.arange(.5, 5.5, .5))
+            dropping_data = pd.DataFrame(self.dropping_dict, index=np.arange(.5, 5.5, .5))
+            df = pd.merge(data_set.reset_index(), dropping_data.reset_index(), on='index', suffixes=('_BP', '_DP'))
+            writer = ExcelWriter(f'{algorithm}_blocking_probabilities.xlsx')
+            writer2 = ExcelWriter(f'{algorithm}_dropping_probabilities.xlsx')
+            writer3 = ExcelWriter('Intra_Slice_Probabilities.xlsx')
+            data_set.to_excel(writer, sheet_name='Sheet1')
+            dropping_data.to_excel(writer2, sheet_name='Sheet1')
+            df.to_excel(writer, sheet_name='Sheet1')
+            writer.save()
+            writer2.save()
+            writer3.save()
+            self.plot_graphs(algorithm, df)
 
-            if choice == 1:
-                algorithm = 'Intra'
-                calc = IntraCalculations()
-                print('Implementing Intra Slice handover\n')
-                algorithm = 'Intra'
-                for key in slice_type:
-                    if key == 'eMBB' or key == 'uRLLC':
-                        probabilities = calc.calculations(key, slice_type[key])
-                        print(f'The blocking probability for {probabilities[0]} slice is: {probabilities[1]} \n')
-                        print(f'The dropping probability for {probabilities[0]} slice is: {probabilities[2]} \n')
-                        print('******************************************************************************\n')
-                        self.data_dict.update({key: probabilities[1]})
-                        self.dropping_dict.update({key: probabilities[2]})
-                    else:
-                        probabilities = calc.calculations(key, slice_type[key])
-                        print(f'The blocking probability for {probabilities[0]} slice is: {probabilities[1]} \n')
-                        print('******************************************************************************\n')
-                        self.data_dict.update({key: probabilities[1]})
-                data_set = pd.DataFrame(self.data_dict, index=np.arange(2, 7, .5))
-                dropping_data = pd.DataFrame(self.dropping_dict, index=np.arange(2, 7, .5))
-                writer = ExcelWriter(f'{algorithm}_blocking_probabilities.xlsx')
-                writer2 = ExcelWriter(f'{algorithm}_dropping_probabilities.xlsx')
-                data_set.to_excel(writer, sheet_name='Sheet1')
-                dropping_data.to_excel(writer2, sheet_name='Sheet1')
-                writer.save()
-                writer2.save()
-
-            else:
-                print()
-                calc = InterCalculations()
-                algorithm = 'Inter'
-                for key in slice_type:
-                    if key == 'eMBB' or key == 'uRLLC':
-                        probabilities = calc.calculations(key, slice_type[key])
-                        print(f'The blocking probability for {probabilities[0]} slice is: {probabilities[1]} \n')
-                        print(f'The dropping probability for {probabilities[0]} slice is: {probabilities[2]} \n')
-                        print('******************************************************************************\n')
-                        self.data2_dict.update({key: probabilities[1]})
-                        self.dropping2_dict.update({key: probabilities[2]})
-                    else:
-                        probabilities = calc.calculations(key, slice_type[key])
-                        print(f'The blocking probability for {probabilities[0]} slice is: {probabilities[1]} \n')
-                        print('******************************************************************************\n')
-                        self.data2_dict.update({key: probabilities[1]})
-                data_set2 = pd.DataFrame(self.data2_dict, index=np.arange(2, 7, 0.5))
-                dropping2_data = pd.DataFrame(self.dropping2_dict, index=np.arange(2, 7, 0.5))
-                writer = ExcelWriter(f'{algorithm}_blocking_probabilities.xlsx')
-                writer2 = ExcelWriter(f'{algorithm}_dropping_probabilities.xlsx')
-                data_set2.to_excel(writer, sheet_name='Sheet1')
-                dropping2_data.to_excel(writer2, sheet_name='Sheet1')
-                writer.save()
-                writer2.save()
-            choice += 1
+        else:
+            print('Simulating Inter Slice handover\n')
+            calc = InterCalculations()
+            algorithm = 'Inter'
+            for key in slice_type:
+                if key == 'eMBB' or key == 'uRLLC':
+                    probabilities = calc.calculations(key, slice_type[key])
+                    print(f'The blocking probability for {probabilities[0]} slice is: {probabilities[1]} \n')
+                    print(f'The dropping probability for {probabilities[0]} slice is: {probabilities[2]} \n')
+                    print('******************************************************************************\n')
+                    self.data2_dict.update({key: probabilities[1]})
+                    self.dropping2_dict.update({key: probabilities[2]})
+                else:
+                    probabilities = calc.calculations(key, slice_type[key])
+                    print(f'The blocking probability for {probabilities[0]} slice is: {probabilities[1]} \n')
+                    print('******************************************************************************\n')
+                    self.data2_dict.update({key: probabilities[1]})
+            data_set2 = pd.DataFrame(self.data2_dict, index=np.arange(.5, 5.5, .5))
+            dropping2_data = pd.DataFrame(self.dropping2_dict, index=np.arange(.5, 5.5, .5))
+            df2 = pd.merge(data_set2.reset_index(), dropping2_data.reset_index(), on='index', suffixes=('_BP', '_DP'))
+            inter_writter = ExcelWriter('Inter_Slice_Probabilities.xlsx')
+            writer = ExcelWriter(f'{algorithm}_blocking_probabilities.xlsx')
+            writer2 = ExcelWriter(f'{algorithm}_dropping_probabilities.xlsx')
+            df2.to_excel(inter_writter, sheet_name='Sheet1')
+            data_set2.to_excel(writer, sheet_name='Sheet1')
+            dropping2_data.to_excel(writer2, sheet_name='Sheet1')
+            writer.save()
+            writer2.save()
+            inter_writter.save()
+            self.plot_graphs(algorithm, df2)
 
         # # fig = plt.figure()
-        for data in [data_set.reset_index()]:
-                     plt.plot(data['index'], data['mMTC'])
-        plt.show()
+        # for data in [data_set.reset_index()]:
+        #     plt.plot(data['index'], data['mMTC'])
+        # plt.show()
+        # # Merge the Data Frames
+        # df = pd.merge(data_set.reset_index(), dropping_data.reset_index(), on='index', suffixes=('_BP', '_DP'))
+        # print(df)
+        # writer = ExcelWriter('Intra_Slice_Probabilities.xlsx')
+        # df.to_excel(writer, sheet_name='Sheet1')
+        # writer.save()
         #
-        # # ax = data_set.plot()
-        # # m = ax.get_lines()
-        # # data_set2.plot(ax=ax, linestyle='--')
-        # # plt.show()
-        #
-        # #
-        # # for dropping in [dropping_data.reset_index(), dropping2_data.reset_index() ]:
-        # #     plt.plot(dropping['index'], dropping['eMBB'])
-        # # plt.show()
-        # # print(data_set['eMBB'])
-        # # print(data_set2['eMBB'])
-        # # print(dropping_data>dropping2_data)
-        # # print(dropping2_data>dropping_data)
-        # # print(data_set['mMTC'])
-        # #
-        # # print(data_set2['mMTC'])
-        # # print(data_set['mMTC'])
-        # # print(data_set2['mMTC'] > data_set['mMTC'])
-        #
-        # # print(data_set2)
-        # # data_set
-        # # data_set.plot.bar()
-        # # ax= plt.gca()
-        # # data_set.reset_index()
-        # # m = data_set2['mMTC']
-        # # data_set.plot(y=['mMTC',m], use_index=True, kind='bar')
-        # # plt.show()
-        #
-        df = pd.merge(data_set.reset_index(), data_set2.reset_index(), on='index', suffixes=('_intra', '_inter'))
-        print(df)
-        writer = ExcelWriter('All_Blocking_probabilities.xlsx')
-        df.to_excel(writer, sheet_name='Sheet1')
-        writer.save()
-        #
-        # # # df.plot.bar(x='index')
-        # # # data_set.plot(y=['mMTC'], use_index=True)
-        # #
-        # # ax = plt.axes(projection='3d')
-        # # ax.plot3D(df['index'],df['eMBB_intra'],df['index'],'red')
-        # # plt.show()
         # # fig = plt.figure()
-        # # ax = plt.axes(projection="3d")
-        # # ax.bar3d(df['eMBB_intra'],1,1,df['index'],df['index'],df['index'] )
+        # # ax1 = fig.add_subplot(311)
+        # # ax2 = fig.add_subplot(322)
+        # # ax3 = fig.add_subplot(313)
+        # # df.plot(kind='line', x='index', y='uRLLC_BP', ax=ax1)
+        # # df.plot(kind='line', x='index', y='uRLLC_DP', ax=ax2)
+        # # df.plot(kind='line', x='index', y='uRLLC_BP', ax=ax3)
+        # # df.plot(kind='line', x='index', y='uRLLC_DP', ax=ax3)
+        # #
+        # # # df.plot(kind='line', x='index', color='red', y='uRLLC_DP', ax=ax)
         # # plt.show()
+        #
+        # df2 = pd.merge(data_set2.reset_index(), dropping2_data.reset_index(), on='index', suffixes=('_BP', '_DP'))
+        # print(df2)
+        # inter_writter = ExcelWriter('Inter_Slice_Probabilities.xlsx')
+        # df2.to_excel(inter_writter, sheet_name='Sheet1')
+        # inter_writter.save()
+
+        # fig2 = plt.figure()
+        # ay1 = fig2.add_subplot(311)
+        # ay2 = fig2.add_subplot(321)
+        # ay3 = fig2.add_subplot(313)
+        #
+        # df2.plot(kind='line', x='index', y='uRLLC_BP', ax=ay1)
+        # df2.plot(kind='line', x='index', y='uRLLC_DP', ax=ay2)
+        # df2.plot(kind='line', x='index', y='uRLLC_BP', ax=ay3)
+        # df2.plot(kind='line', x='index', y='uRLLC_DP', ax=ay3)
+        #
+        # plt.show()
+
+        # fig1 = plt.figure(1)
+        # plt.plot(df['index'], df['eMBB_BP'])
+        # plt.xlabel('Call Arrival Rate')
+        # plt.ylabel('Call Blocking Probabilty')
+        # plt.title('eMBB Slice Intra Slice')
+        # plt.savefig('Intra Slice eMBB blocking Probability')
+        # fig2 = plt.figure(2)
+        # plt.plot(df['index'], df['eMBB_DP'])
+        # plt.xlabel('Call Arrival Rate')
+        # plt.ylabel('Call Dropping Probabilty')
+        # plt.title('eMBB Slice Intra Slice')
+        # plt.savefig('Intra Slice eMBB dropping Probability')
+        # fig2 = plt.figure(3)
+        # plt.plot(df['index'], df['mMTC'])
+        # plt.xlabel('Call Arrival Rate')
+        # plt.ylabel('Call Blocking Probabilty')
+        # plt.title('mMTC Slice Intra Slice')
+        # plt.savefig('Intra Slice mMTC blocking Probability')
+        # fig2 = plt.figure(4)
+        # plt.plot(df['index'], df['uRLLC_BP'])
+        # plt.xlabel('Call Arrival Rate')
+        # plt.ylabel('Call Blocking Probabilty')
+        # plt.title('uRLLC Slice Intra Slice')
+        # plt.savefig('Intra Slice uRLLC blocking Probability')
+        # fig2 = plt.figure(5)
+        # plt.plot(df['index'], df['uRLLC_DP'])
+        # plt.xlabel('Call Arrival Rate')
+        # plt.ylabel('Call Dropping Probabilty Intra Slice')
+        # plt.title('uRLLC Slice Intra Slice')
+        # plt.savefig('Intra Slice uRLLC dropping Probability')
+        # # Inter Slice
+        #
+        # fig1 = plt.figure(6)
+        # plt.plot(df2['index'], df2['eMBB_BP'])
+        # plt.xlabel('Call Arrival Rate')
+        # plt.ylabel('Call Blocking Probabilty')
+        # plt.title('eMBB Slice Inter Slice')
+        # plt.savefig('Inter Slice eMBB blocking Probability')
+        # fig2 = plt.figure(7)
+        # plt.plot(df2['index'], df2['eMBB_DP'])
+        # plt.xlabel('Call Arrival Rate')
+        # plt.ylabel('Call Dropping Probabilty')
+        # plt.title('eMBB Slice Inter Slice')
+        # plt.savefig('Inter Slice eMBB dropping Probability')
+        # fig2 = plt.figure(8)
+        # plt.plot(df2['index'], df2['mMTC'])
+        # plt.xlabel('Call Arrival Rate')
+        # plt.ylabel('Call Blocking Probabilty')
+        # plt.title('mMTC Slice Inter Slice')
+        # plt.savefig('Inter Slice mMTC blocking Probability')
+        # fig2 = plt.figure(9)
+        # plt.plot(df2['index'], df2['uRLLC_BP'])
+        # plt.xlabel('Call Arrival Rate')
+        # plt.ylabel('Call Blocking Probabilty')
+        # plt.title('uRLLC Slice Inter Slice ')
+        # plt.savefig('Inter Slice uRLLC blocking Probability')
+        # fig2 = plt.figure(10)
+        # plt.plot(df2['index'], df2['uRLLC_DP'])
+        # plt.xlabel('Call Arrival Rate')
+        # plt.ylabel('Call Dropping Probabilty')
+        # plt.title('uRLLC Slice Inter Slice')
+        # plt.savefig('Inter Slice uRLLC dropping Probability')
+        #
+        # fig2 = plt.figure(11)
+        # plt.plot(df['index'], df['eMBB_BP'], df['eMBB_DP'])
+        # plt.xlabel('Call Arrival Rate')
+        # plt.ylabel('Call Blocking/Dropping Probabilty')
+        # plt.title('eMBB Slice Intra Slice')
+        # plt.savefig('Intra Slice eMBB Comparison')
+        #
+        # fig2 = plt.figure(12)
+        # plt.plot(df['index'], df['uRLLC_BP'], df['uRLLC_DP'])
+        # plt.xlabel('Call Arrival Rate')
+        # plt.ylabel('Call Blocking/Dropping Probabilty')
+        # plt.title('uRLLC Slice Intra Slice')
+        # plt.savefig('Intra Slice uRLLC Comparison')
+        #
+        # fig2 = plt.figure(13)
+        # plt.plot(df['index'], df2['eMBB_BP'], df2['eMBB_DP'])
+        # plt.xlabel('Call Arrival Rate')
+        # plt.ylabel('Call Blocking/Dropping Probabilty')
+        # plt.title('eMBB Slice Inter Slice')
+        # plt.savefig('Inter Slice eMBB Comparison')
+        #
+        # fig2 = plt.figure(14)
+        # plt.plot(df['index'], df2['uRLLC_BP'], df2['uRLLC_DP'])
+        # plt.xlabel('Call Arrival Rate')
+        # plt.ylabel('Call Blocking/Dropping Probabilty')
+        # plt.title('uRLLC Slice Inter Slice')
+        # plt.savefig('Inter Slice uRLLC Comparison')
+        #
+        # plt.show()
 
 
 simulation = Simulator()
