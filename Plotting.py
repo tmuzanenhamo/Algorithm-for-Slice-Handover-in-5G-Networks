@@ -19,6 +19,7 @@ def plotting():
             plt.plot(data['index'], data[columns[i]])
             plt.grid()
             plt.xlabel('Basic Bandwidth Unit (BBU)')
+            plt.grid()
             if columns[i][5:] == 'BP' or columns[i][5:] == '_BP':
                 prob = 'Call Blocking Probability'
                 plt.ylabel(f'{prob}')
@@ -86,6 +87,7 @@ def plotting():
             plt.figure(i)
             plt.plot(data['index'], data[columns[i]])
             plt.xlabel('Basic Bandwidth Unit (BBU)')
+            plt.grid()
             if columns[i][5:] == 'BP' or columns[i][5:] == '_BP':
                 prob = 'Call Blocking Probability'
                 plt.ylabel(f'{prob}')
@@ -153,6 +155,7 @@ def plotting():
             plt.figure(i)
             plt.plot(data['index'], data[columns[i]])
             plt.xlabel('Capacity')
+            plt.grid()
             if columns[i][5:] == 'BP' or columns[i][5:] == '_BP':
                 prob = 'Call Blocking Probability'
                 plt.ylabel(f'{prob}')
@@ -217,6 +220,7 @@ def plotting():
             plt.figure(i)
             plt.plot(data['index'], data[columns[i]])
             plt.xlabel('Capacity')
+            plt.grid()
             if columns[i][5:] == 'BP' or columns[i][5:] == '_BP':
                 prob = 'Call Blocking Probability'
                 plt.ylabel(f'{prob}')
@@ -284,6 +288,7 @@ def plotting():
             plt.figure(i)
             plt.plot(data['index'], data[columns[i]])
             plt.xlabel('Threshold')
+            plt.grid()
             if columns[i][5:] == 'BP' or columns[i][5:] == '_BP':
                 prob = 'Call Blocking Probability'
                 plt.ylabel(f'{prob}')
@@ -352,6 +357,7 @@ def plotting():
             plt.figure(i)
             plt.plot(data['index'], data[columns[i]])
             plt.xlabel('Threshold')
+            plt.grid()
             if columns[i][5:] == 'BP' or columns[i][5:] == '_BP':
                 prob = 'Call Blocking Probability'
                 plt.ylabel(f'{prob}')
@@ -543,6 +549,142 @@ def plotting():
     plt.savefig(f'Results\\effect of arrival rate\\InterSlice\\{figname}')
     plt.close('all')
 
+    # Load the data into the dataFrame
+
+    df9 = pd.read_excel(r'C:\Users\tmuza\Desktop\Final Year\Handover\Results\effect of departure rate\Intra '
+                        r'Slice\effect of departure rate on intraslice.xlsx')
+
+    # Plot individual graphs
+
+    for data in [df9.reset_index()]:
+        for i in range(5):
+            plt.figure(i)
+            plt.plot(data['index'], data[columns[i]])
+            plt.xlabel('Departure Rate')
+            plt.grid()
+            if columns[i][5:] == 'BP' or columns[i][5:] == '_BP':
+                prob = 'Call Blocking Probability'
+                plt.ylabel(f'{prob}')
+                plt.title(f'Effect of Departure Rate on {columns[i][0:5]} {prob}')
+                figname = f'Effect of Departure Rate on {columns[i]} {prob}'
+                plt.savefig(f'Results/effect of departure rate/Intra Slice/{figname}')
+            elif columns[i][5:] == 'DP' or columns[i][5:] == '_DP':
+                prob = 'Call Dropping Probability'
+                plt.ylabel(f'{prob}')
+                plt.title(f'Effect of Departure Rate on {columns[i][0:5]} {prob}')
+                figname = f'Effect of Departure Rate on {columns[i]} {prob}'
+                plt.savefig(f'Results/effect of departure rate/Intra Slice/{figname}')
+    plt.close('all')
+
+    # Plot eMBB BP Vs DP on the same axis
+
+    axx16 = plt.gca()
+    df9.plot(kind='line', x='index', y='eMBB_BP', ax=axx16)
+    df9.plot(kind='line', x='index', y='eMBB_DP', ax=axx16)
+    plt.xlabel('Departure Rate')
+    plt.ylabel('Call Blocking/Dropping Probability')
+    plt.title('Effect of Increasing Departure Rate on IntraSlice Call Blocking/Dropping Probability')
+    figname = 'eMBB BP vs DP'
+    plt.grid()
+    plt.savefig(f'Results/effect of departure rate/Intra Slice/{figname}')
+    plt.close('all')
+
+    # Plot uRLLC BP vs DP on the same axis
+
+    axx17 = plt.gca()
+    df9.plot(kind='line', x='index', y='uRLLC_BP', ax=axx17)
+    df9.plot(kind='line', x='index', y='uRLLC_DP', ax=axx17)
+    plt.xlabel('Departure Rate')
+    plt.ylabel('Call Blocking/Dropping Probability')
+    plt.title('Effect of Increasing Departure Rate on IntraSlice Call Blocking/Dropping Probability')
+    figname = 'uRLLC BP vs DP'
+    plt.grid()
+    plt.savefig(f'Results/effect of departure rate/Intra Slice/{figname}')
+    plt.close('all')
+
+    # Plot all graphs on the same axis
+    ax8 = plt.gca()
+    df9.plot(kind='line', x='index', y='eMBB_BP', ax=ax8)
+    df9.plot(kind='line', x='index', y='eMBB_DP', ax=ax8)
+    df9.plot(kind='line', x='index', y='uRLLC_DP', ax=ax8)
+    df9.plot(kind='line', x='index', y='uRLLC_BP', ax=ax8)
+    df9.plot(kind='line', x='index', y='mMTC_BP', ax=ax8)
+    plt.xlabel('Departure Rate')
+    plt.ylabel('Call Blocking/Dropping Probability')
+    plt.title('Effect of Increasing Departure Rate on IntraSlice Call Blocking/Dropping Probability')
+    figname = 'All graphs'
+    plt.grid()
+    plt.savefig(f'Results\\effect of departure rate\\Intra Slice\\{figname}')
+    plt.close('all')
+
+    # Load the data into a dataFrame
+
+    df10 = pd.read_excel(r'C:\Users\tmuza\Desktop\Final Year\Handover\Results\effect of departure rate\Inter '
+                         r'Slice\effect of departure rate on interslice.xlsx')
+
+    # Plot individual graphs
+
+    for data in [df10.reset_index()]:
+        for i in range(5):
+            plt.figure(i)
+            plt.plot(data['index'], data[columns[i]])
+            plt.xlabel('Departure Rate')
+            plt.grid()
+            if columns[i][5:] == 'BP' or columns[i][5:] == '_BP':
+                prob = 'Call Blocking Probability'
+                plt.ylabel(f'{prob}')
+                plt.title(f'Effect of Departure Rate on {columns[i][0:5]} {prob}')
+                figname = f'Effect of Departure Rate on {columns[i]} {prob}'
+                plt.savefig(f'Results/effect of departure rate/Inter Slice/{figname}')
+            elif columns[i][5:] == 'DP' or columns[i][5:] == '_DP':
+                prob = 'Call Dropping Probability'
+                plt.ylabel(f'{prob}')
+                plt.title(f'Effect of Departure Rate on {columns[i][0:5]} {prob}')
+                figname = f'Effect of Departure Rate on {columns[i]} {prob}'
+                plt.savefig(f'Results/effect of departure rate/Inter Slice/{figname}')
+    plt.close('all')
+
+    # Plot eMBB BP Vs DP on the same axis
+
+    axx18 = plt.gca()
+    df10.plot(kind='line', x='index', y='eMBB_BP', ax=axx18)
+    df10.plot(kind='line', x='index', y='eMBB_DP', ax=axx18)
+    plt.xlabel('Departure Rate')
+    plt.ylabel('Call Blocking/Dropping Probability')
+    plt.title('Effect of Increasing Departure Rate on InterSlice Call Blocking/Dropping Probability')
+    figname = 'eMBB BP vs DP'
+    plt.grid()
+    plt.savefig(f'Results/effect of departure rate/Inter Slice/{figname}')
+    plt.close('all')
+
+    # Plot uRLLC BP vs DP on the same axis
+
+    axx19 = plt.gca()
+    df10.plot(kind='line', x='index', y='uRLLC_BP', ax=axx19)
+    df10.plot(kind='line', x='index', y='uRLLC_DP', ax=axx19)
+    plt.xlabel('Departure Rate')
+    plt.ylabel('Call Blocking/Dropping Probability')
+    plt.title('Effect of Increasing Departure Rate on InterSlice Call Blocking/Dropping Probability')
+    figname = 'uRLLC BP vs DP'
+    plt.grid()
+    plt.savefig(f'Results/effect of departure rate/Inter Slice/{figname}')
+    plt.close('all')
+
+    # Plot all graphs on the same axis
+    ax9 = plt.gca()
+    df10.plot(kind='line', x='index', y='eMBB_BP', ax=ax9)
+    df10.plot(kind='line', x='index', y='eMBB_DP', ax=ax9)
+    df10.plot(kind='line', x='index', y='uRLLC_DP', ax=ax9)
+    df10.plot(kind='line', x='index', y='uRLLC_BP', ax=ax9)
+    df10.plot(kind='line', x='index', y='mMTC_BP', ax=ax9)
+    plt.xlabel('Departure Rate')
+    plt.ylabel('Call Blocking/Dropping Probability')
+    plt.title('Effect of Increasing Departure Rate on InterSlice Call Blocking/Dropping Probability')
+    figname = 'All graphs'
+    plt.grid()
+    plt.savefig(f'Results\\effect of departure rate\\Inter Slice\\{figname}')
+    plt.close('all')
+
     # Comparing Inter Slice vs Intra Slice
 
     # Effect of BBU on Inter vs Intra Call Blocking Probability
@@ -697,7 +839,7 @@ def plotting():
     plt.title('Effect of Increasing Threshold on Inter and Intra Slice Dropping Probability')
     figname = 'effect of Threshold on Inter vs Intra eMBB Dropping Probability'
     plt.grid()
-    plt.legend(loc='upper right')
+    plt.legend(loc='center right')
     plt.savefig(f'Results\\comparison\\effect of threshold\\{figname}')
     plt.close('all')
 
@@ -710,7 +852,7 @@ def plotting():
     plt.title('Effect of Increasing Threshold on Inter and Intra Slice Blocking Probability')
     figname = 'effect of Threshold on Inter vs Intra uRLLC Blocking Probability'
     plt.grid()
-    plt.legend(loc='center right')
+    plt.legend(loc='upper right')
     plt.savefig(f'Results\\comparison\\effect of threshold\\{figname}')
     plt.close('all')
 
@@ -723,7 +865,7 @@ def plotting():
     plt.title('Effect of Increasing Threshold on Inter and Intra Slice Dropping Probability')
     figname = 'effect of Threshold on Inter vs Intra uRLLC Dropping Probability'
     plt.grid()
-    plt.legend(loc='upper right')
+    plt.legend(loc='center right')
     plt.savefig(f'Results\\comparison\\effect of threshold\\{figname}')
     plt.close('all')
 
@@ -740,17 +882,17 @@ def plotting():
     plt.savefig(f'Results\\comparison\\effect of threshold\\{figname}')
     plt.close('all')
 
-    # Efeect of Arrival Rate on Inter vs Intra Call Dropping Probability
+    # Effect of Arrival Rate on Inter vs Intra Call Dropping Probability
 
     a15 = plt.gca()
-    df7.plot(kind='line', x='index', y='mMTC_BP', label= 'Intra mMTC_BP', ax=a15)
-    df8.plot(kind='line', x='index', y='mMTC_BP', label= 'Inter mMTC_BP', ax=a15)
+    df7.plot(kind='line', x='index', y='mMTC_BP', label='Intra mMTC_BP', ax=a15)
+    df8.plot(kind='line', x='index', y='mMTC_BP', label='Inter mMTC_BP', ax=a15)
     plt.xlabel('Arrival Rate')
     plt.ylabel('Call Blocking Probability')
     plt.title('Effect of Increasing Arrival Rate on Inter and Intra Slice Blocking Probability')
     figname = 'effect of Arrival Rate on Inter vs Intra mMTC Blocking Probability'
     plt.grid()
-    plt.legend(loc='upper right')
+    plt.legend(loc='center right')
     plt.savefig(f'Results\\comparison\\effect of arrival rate\\{figname}')
     plt.close('all')
 
@@ -764,7 +906,7 @@ def plotting():
     plt.title('Effect of Increasing Arrival Rate on Inter and Intra Slice Blocking Probability')
     figname = 'effect of Arrival Rate on Inter vs Intra eMBB Blocking Probability'
     plt.grid()
-    plt.legend(loc='upper right')
+    plt.legend(loc='center right')
     plt.savefig(f'Results\\comparison\\effect of arrival rate\\{figname}')
     plt.close('all')
 
@@ -778,7 +920,7 @@ def plotting():
     plt.title('Effect of Increasing Arrival Rate on Inter and Intra Slice Blocking Probability')
     figname = 'effect of Arrival Rate on Inter vs Intra uRLLC Blocking Probability'
     plt.grid()
-    plt.legend(loc='upper right')
+    plt.legend(loc='center right')
     plt.savefig(f'Results\\comparison\\effect of arrival rate\\{figname}')
     plt.close('all')
 
@@ -788,11 +930,11 @@ def plotting():
     df7.plot(kind='line', x='index', y='uRLLC_DP', label='Intra uRLLC_DP', ax=a18)
     df8.plot(kind='line', x='index', y='uRLLC_DP', label='Inter uRLLC_DP', ax=a18)
     plt.xlabel('Arrival Rate')
-    plt.ylabel('Call Blocking Probability')
+    plt.ylabel('Call Dropping Probability')
     plt.title('Effect of Increasing Arrival Rate on Inter and Intra Slice Dropping Probability')
     figname = 'effect of Arrival Rate on Inter vs Intra uRLLC Dropping Probability'
     plt.grid()
-    plt.legend(loc='upper right')
+    plt.legend(loc='center right')
     plt.savefig(f'Results\\comparison\\effect of arrival rate\\{figname}')
     plt.close('all')
 
@@ -802,12 +944,82 @@ def plotting():
     df7.plot(kind='line', x='index', y='eMBB_DP', label='Intra eMBB_DP', ax=a19)
     df8.plot(kind='line', x='index', y='eMBB_DP', label='Inter eMBB_DP', ax=a19)
     plt.xlabel('Arrival Rate')
-    plt.ylabel('Call Blocking Probability')
+    plt.ylabel('Call Dropping Probability')
     plt.title('Effect of Increasing Arrival Rate on Inter and Intra Slice Dropping Probability')
     figname = 'effect of Arrival Rate on Inter vs Intra eMBB Dropping Probability'
     plt.grid()
-    plt.legend(loc='upper right')
+    plt.legend(loc='center right')
     plt.savefig(f'Results\\comparison\\effect of arrival rate\\{figname}')
+    plt.close('all')
+
+    # Effect of Departure Rate on Inter vs Intra Call Dropping Probability
+
+    a20 = plt.gca()
+    df9.plot(kind='line', x='index', y='mMTC_BP', label='Intra mMTC_BP', ax=a20)
+    df10.plot(kind='line', x='index', y='mMTC_BP', label='Inter mMTC_BP', ax=a20)
+    plt.xlabel('Departure Rate')
+    plt.ylabel('Call Blocking Probability')
+    plt.title('Effect of Increasing Departure Rate on Inter and Intra Slice Blocking Probability')
+    figname = 'effect of Departure Rate on Inter vs Intra mMTC Blocking Probability'
+    plt.grid()
+    plt.legend(loc='upper right')
+    plt.savefig(f'Results\\comparison\\effect of departure rate\\{figname}')
+    plt.close('all')
+
+    # Effect of Departure Rate on Inter vs Intra Call Dropping Probability
+
+    a21 = plt.gca()
+    df9.plot(kind='line', x='index', y='eMBB_BP', label='Intra eMBB_BP', ax=a21)
+    df10.plot(kind='line', x='index', y='eMBB_BP', label='Inter eMBB_BP', ax=a21)
+    plt.xlabel('Departure Rate')
+    plt.ylabel('Call Blocking Probability')
+    plt.title('Effect of Increasing Departure Rate on Inter and Intra Slice Blocking Probability')
+    figname = 'effect of Departure Rate on Inter vs Intra eMBB Blocking Probability'
+    plt.grid()
+    plt.legend(loc='upper right')
+    plt.savefig(f'Results\\comparison\\effect of departure rate\\{figname}')
+    plt.close('all')
+
+    # Effect of Departure Rate on Inter vs Intra Call Dropping Probability
+
+    a22 = plt.gca()
+    df9.plot(kind='line', x='index', y='uRLLC_BP', label='Intra uRLLC_BP', ax=a22)
+    df10.plot(kind='line', x='index', y='uRLLC_BP', label='Inter uRLLC_BP', ax=a22)
+    plt.xlabel('Departure Rate')
+    plt.ylabel('Call Blocking Probability')
+    plt.title('Effect of Increasing Departure Rate on Inter and Intra Slice Blocking Probability')
+    figname = 'effect of Departure Rate on Inter vs Intra uRLLC Blocking Probability'
+    plt.grid()
+    plt.legend(loc='upper right')
+    plt.savefig(f'Results\\comparison\\effect of departure rate\\{figname}')
+    plt.close('all')
+
+    # Effect of Departure Rate on Inter vs Intra Call Dropping Probability
+
+    a23 = plt.gca()
+    df9.plot(kind='line', x='index', y='uRLLC_DP', label='Intra uRLLC_DP', ax=a23)
+    df10.plot(kind='line', x='index', y='uRLLC_DP', label='Inter uRLLC_DP', ax=a23)
+    plt.xlabel('Departure Rate')
+    plt.ylabel('Call Dropping Probability')
+    plt.title('Effect of Increasing Departure Rate on Inter and Intra Slice Dropping Probability')
+    figname = 'effect of Departure Rate on Inter vs Intra uRLLC Dropping Probability'
+    plt.grid()
+    plt.legend(loc='upper right')
+    plt.savefig(f'Results\\comparison\\effect of departure rate\\{figname}')
+    plt.close('all')
+
+    # Effect of Departure Rate on Inter vs Intra Call Dropping Probability
+
+    a24 = plt.gca()
+    df9.plot(kind='line', x='index', y='eMBB_DP', label='Intra eMBB_DP', ax=a24)
+    df10.plot(kind='line', x='index', y='eMBB_DP', label='Inter eMBB_DP', ax=a24)
+    plt.xlabel('Departure Rate')
+    plt.ylabel('Call Dropping Probability')
+    plt.title('Effect of Increasing Departure Rate on Inter and Intra Slice Dropping Probability')
+    figname = 'effect of Departure Rate on Inter vs Intra eMBB Dropping Probability'
+    plt.grid()
+    plt.legend(loc='upper right')
+    plt.savefig(f'Results\\comparison\\effect of departure rate\\{figname}')
     plt.close('all')
 
 
