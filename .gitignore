@@ -6,6 +6,7 @@
 /venv
 *.xlsx
 *.png
+/Results
 
 
 

@@ -11,6 +11,7 @@ class IntraCalculations:
     handoff_rate = 0.5
     holding_time1 = handoff_rate + 0.5
     holding_time2 = handoff_rate + 0.5
+
     eMBB_handoff_thresh = 0
     eMBB_newcall_thresh = 0
     uRLLC_handoff_thresh = 0
@@ -21,6 +22,7 @@ class IntraCalculations:
     uRLLC_capacity_inter = 0
     uRLLC_newcall_thresh_inter = 0
     uRLLC_handoff_thresh_inter = 0
+    mMTC_thresh = 0
 
     def __init__(self):
         print('Intra Slice Handover Calculations Started\n')
@@ -57,6 +59,8 @@ class IntraCalculations:
         G3 = np.zeros(10)
         # New Call arrival rates
         callA = np.arange(3, 8, .5)  # eMBB, uRLLC, mMTC
+        # callA = np.ones(10)
+        # callA *= 2
         # Handoff Call Arrival rates
         handA = (callA * cls.handoff_rate) / 0.5
         # Initialise Available Bandwidth
@@ -91,7 +95,8 @@ class IntraCalculations:
             cls.uRLLC_handoff_thresh = params[2]
             cls.uRLLC_newcall_thresh = params[1]
             cls.uRLLC_capacity = params[0]
-            cls.mMTC_capacity = params[0]
+            cls.mMTC_capacity = params[1]
+            cls.mMTC_thresh = params[1]
 
             # Available bandwidth
             newB *= (cls.capacity / cls.capacity) * callA
@@ -113,7 +118,7 @@ class IntraCalculations:
             handNum = round((cls.handoff_thresh / bbuH) + 1)
             newNumU = round((cls.uRLLC_newcall_thresh / bbuNU) + 1)
             handNumU = round((cls.uRLLC_handoff_thresh / bbuHU) + 1)
-            newNumM = round((cls.mMTC_capacity / bbuNM) + 1)
+            newNumM = round((cls.mMTC_thresh / bbuNM) + 1)
             e = 0
 
             for i in range(10):
@@ -168,7 +173,8 @@ class IntraCalculations:
             cls.eMBB_handoff_thresh = params[2]
             cls.eMBB_newcall_thresh = params[1]
             cls.eMBB_capacity = params[0]
-            cls.mMTC_capacity = params[0] - 15
+            cls.mMTC_capacity = params[1]
+            cls.mMTC_thresh = params[1]
 
             # Available bandwidth
             newB *= (cls.capacity / cls.capacity) * callA
@@ -190,7 +196,7 @@ class IntraCalculations:
             handNum = round((cls.handoff_thresh / bbuHE) + 1)
             newNumU = round((cls.eMBB_newcall_thresh / bbuN) + 1)
             handNumU = round((cls.eMBB_handoff_thresh / bbuH) + 1)
-            newNumM = round((cls.mMTC_capacity / bbuNM) + 1)
+            newNumM = round((cls.mMTC_thresh / bbuNM) + 1)
             e = 0
 
             for i in range(10):
@@ -246,13 +252,14 @@ class IntraCalculations:
             cls.eMBB_newcall_thresh = params[1]
             cls.eMBB_capacity = params[0] + 15
             cls.mMTC_capacity = params[0]
+            cls.mMTC_thresh = params[1]
 
             # Available bandwidth
-            newB *= (cls.uRLLC_capacity / (cls.uRLLC_capacity)) * callA
-            handB *= (cls.uRLLC_capacity / (cls.uRLLC_capacity)) * handA
-            newBM *= (cls.mMTC_capacity / (cls.mMTC_capacity)) * callA
-            newBE *= (cls.eMBB_capacity / (cls.eMBB_capacity)) * callA
-            handBE *= (cls.eMBB_capacity / (cls.eMBB_capacity)) * handA
+            newB *= (cls.uRLLC_capacity / cls.uRLLC_capacity) * callA
+            handB *= (cls.uRLLC_capacity / cls.uRLLC_capacity) * handA
+            newBM *= (cls.mMTC_capacity / cls.mMTC_capacity) * callA
+            newBE *= (cls.eMBB_capacity / cls.eMBB_capacity) * callA
+            handBE *= (cls.eMBB_capacity / cls.eMBB_capacity) * handA
 
             # Load at each slice
             newL *= newB / cls.holding_time1
@@ -266,7 +273,7 @@ class IntraCalculations:
             handNum = round((cls.eMBB_handoff_thresh / bbuHE) + 1)
             newNumU = round((cls.uRLLC_newcall_thresh / bbuN) + 1)
             handNumU = round((cls.uRLLC_handoff_thresh / bbuN) + 1)
-            newNumM = round((cls.mMTC_capacity / bbuNM) + 1)
+            newNumM = round((cls.mMTC_thresh / bbuNM) + 1)
 
             k = 0
 
@@ -324,10 +331,15 @@ class InterCalculations(IntraCalculations):
         G1 = np.zeros(10)
         G2 = np.zeros(10)
         G3 = np.zeros(10)
+
         # New Call arrival rates
         callA = np.arange(3, 8, .5)  # eMBB, uRLLC, mMTC
+        # callA = np.ones(10)
+        # callA *= 2
+
         # Handoff Call Arrival rates
         handA = (callA * cls.handoff_rate) / 0.5
+
         # Initialise Available Bandwidth
         newB = np.ones(len(callA))
         handB = np.ones(len(handA))
@@ -383,7 +395,6 @@ class InterCalculations(IntraCalculations):
             handNumE = round((cls.eMBB_handoff_thresh / bbuHE) + 1)
             newNumU = round((cls.uRLLC_newcall_thresh / bbuNU) + 1)
             handNumU = round((cls.uRLLC_handoff_thresh / bbuHU) + 1)
-            n = 0
             h = []
 
             for i in range(10):
@@ -438,7 +449,8 @@ class InterCalculations(IntraCalculations):
             cls.uRLLC_handoff_thresh = params[2]
             cls.uRLLC_newcall_thresh = params[1]
             cls.uRLLC_capacity = params[0]
-            cls.mMTC_capacity = params[0] - 15
+            cls.mMTC_capacity = params[1]
+            cls.mMTC_thresh = params[1]
 
             # Available bandwidth
             newBM *= (cls.mMTC_capacity / cls.mMTC_capacity) * callA
@@ -455,12 +467,11 @@ class InterCalculations(IntraCalculations):
             handLE *= handBE / cls.holding_time2
 
             # Number calls that can be accepted
-            newNum = round((cls.mMTC_capacity / bbuNM) + 1)
+            newNum = round((cls.mMTC_thresh / bbuNM) + 1)
             newNumE = round((cls.new_thresh / bbuN) + 1)
             handNumE = round((cls.handoff_thresh / bbuHE) + 1)
             newNumU = round((cls.uRLLC_newcall_thresh / bbuNU) + 1)
             handNumU = round((cls.uRLLC_handoff_thresh / bbuHU) + 1)
-            n = 0
             h = []
 
             for i in range(10):
@@ -476,7 +487,6 @@ class InterCalculations(IntraCalculations):
                                             bbuNM * newCM <= cls.mMTC_capacity) and (
                                             bbuN * newCE + bbuNU * newCU + bbuNM * newCM <= cls.uRLLC_newcall_thresh) and (
                                             bbuNM * newCM + bbuN * newCE <= cls.new_thresh):
-                                        n += 1
 
                                         for j in range(10):
                                             qn[j] = pow(newLU[j], newCU) / cls.factorial(newCU)
@@ -485,7 +495,7 @@ class InterCalculations(IntraCalculations):
                                             qh_1[j] = pow(handLE[j], handCE) / cls.factorial(handCE)
                                             qn_2[j] = pow(newLM[j], newCM) / cls.factorial(newCM)
                                             # Normalisation Constant
-                                            G[j] = G[j] + (qn[j] + qh[j] + qh_1[j] + qn_1[j] + qn_2[j])
+                                            G[j] = G[j] + qn[j] + qh[j] + qh_1[j] + qn_1[j] + qn_2[j]
 
                                             if ((bbuN + bbuN * (newCE + handCE) + bbuNM * newCM > cls.capacity) or
                                                 (bbuN + bbuN * newCE + bbuNM * newCM > cls.new_thresh)) and \
@@ -518,7 +528,8 @@ class InterCalculations(IntraCalculations):
             cls.eMBB_handoff_thresh = params[2]
             cls.eMBB_newcall_thresh = params[1]
             cls.eMBB_capacity = params[0]
-            cls.mMTC_capacity = params[0] - 15
+            cls.mMTC_capacity = params[1]
+            cls.mMTC_thresh = params[1]
 
             # Available bandwidth
             newBM *= (cls.mMTC_capacity / cls.mMTC_capacity) * callA
@@ -535,12 +546,11 @@ class InterCalculations(IntraCalculations):
             handLE *= handBE / cls.holding_time2
 
             # Number calls that can be accepted
-            newNumM = round((cls.mMTC_capacity / bbuNM) + 1)
+            newNumM = round((cls.mMTC_thresh / bbuNM) + 1)
             newNumE = round((cls.eMBB_newcall_thresh / bbuNE) + 1)
             handNumE = round((cls.eMBB_handoff_thresh / bbuHE) + 1)
             newNumU = round((cls.new_thresh / bbuNU) + 1)
             handNumU = round((cls.handoff_thresh / bbuHU) + 1)
-            n = 0
             h = []
 
             for i in range(10):
@@ -556,7 +566,6 @@ class InterCalculations(IntraCalculations):
                                             bbuNM * newCM <= cls.mMTC_capacity) and (
                                             bbuNE * newCE + bbuNU * newCU + bbuNM * newCM <= cls.new_thresh) and (
                                             bbuNM * newCM + bbuNE * newCE <= cls.new_thresh):
-                                        n += 1
 
                                         for j in range(10):
                                             qn[j] = pow(newLU[j], newCU) / cls.factorial(newCU)
