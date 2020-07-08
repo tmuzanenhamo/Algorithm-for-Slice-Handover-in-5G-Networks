@@ -5,14 +5,15 @@ from UseCases import UseCases
 from Calculations import IntraCalculations, InterCalculations
 import matplotlib.pyplot as plt
 from pandas import ExcelWriter
+import time
 
 
 class Simulator:
     capacity = 30
-    new_thresh = 15
+    new_thresh = 0.5 * capacity
     handoff_thresh = capacity
-    mMTC_thresh = new_thresh
-    mMTC_cap = new_thresh
+    mMTC_thresh = 0.5 * capacity
+    mMTC_cap = 0.5 * capacity
     data_dict = {}
     data2_dict = {}
     dropping_dict = {}
@@ -96,15 +97,20 @@ class Simulator:
 
         choice = eval(input("Enter your choice: "))
         if choice == 1:
+            start = time.time()
             print('Simulating Intra Slice handover\n')
+            # Create the IntraSlice object
             calc = IntraCalculations()
             algorithm = 'Intra'
             for key in slice_type:
                 if key == 'eMBB' or key == 'uRLLC':
+                    # pass slice parameters
                     probabilities = calc.calculations(key, slice_type[key])
+                    # display probabilities
                     print(f'The blocking probability for {probabilities[0]} slice is: {probabilities[1]} \n')
                     print(f'The dropping probability for {probabilities[0]} slice is: {probabilities[2]} \n')
                     print('******************************************************************************\n')
+                    # update data dictionaries
                     self.data_dict.update({key: probabilities[1]})
                     self.dropping_dict.update({key: probabilities[2]})
                 else:
@@ -112,9 +118,14 @@ class Simulator:
                     print(f'The blocking probability for {probabilities[0]} slice is: {probabilities[1]} \n')
                     print('******************************************************************************\n')
                     self.data_dict.update({key: probabilities[1]})
+            # pass blocking data into a pandas data frame
+
             data_set = pd.DataFrame(self.data_dict, index=np.arange(3, 8, .5))
+            # pass dropping data into a pandas data frame
             dropping_data = pd.DataFrame(self.dropping_dict, index=np.arange(3, 8, .5))
+            # merge data frames
             df = pd.merge(data_set.reset_index(), dropping_data.reset_index(), on='index', suffixes=('_BP', '_DP'))
+            # save the data as excel files
             writer = ExcelWriter(f'{algorithm}_blocking_probabilities.xlsx')
             writer2 = ExcelWriter(f'{algorithm}_dropping_probabilities.xlsx')
             writer3 = ExcelWriter('Effect_of_call_Arrival_rate_on_Intra_Slice_Probabilities.xlsx')
@@ -124,6 +135,8 @@ class Simulator:
             writer.save()
             writer2.save()
             writer3.save()
+            stop = time.time()
+            print(f'The time elapsed is: {stop-start}')
             self.plot_graphs(algorithm, df)
 
         else:

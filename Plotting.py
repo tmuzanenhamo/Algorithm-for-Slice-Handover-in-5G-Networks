@@ -207,7 +207,7 @@ def plotting():
     df3.plot(kind='line', x='index', y='mMTC_BP', ax=ax2)
     plt.xlabel('Capacity')
     plt.ylabel('Call Blocking/Dropping Probability')
-    plt.title('Effect of Increasing Capacity on InterSlice Call Blocking/Dropping Probability')
+    plt.title('Effect of Increasing Capacity on Call Blocking/Dropping Probability')
     figname = 'All graphs'
     plt.grid()
     plt.savefig(f'Results\\effect of capacity\\Inter Slice\\{figname}')
@@ -271,7 +271,7 @@ def plotting():
     df4.plot(kind='line', x='index', y='mMTC_BP', ax=ax3)
     plt.xlabel('Capacity')
     plt.ylabel('Call Blocking/Dropping Probability')
-    plt.title('Effect of Increasing Capacity on IntraSlice Call Blocking/Dropping Probability')
+    plt.title('Effect of Increasing Capacity on Call Blocking/Dropping Probability')
     figname = 'All graphs'
     plt.grid()
     plt.savefig(f'Results\\effect of capacity\\Intra Slice\\{figname}')
@@ -339,7 +339,7 @@ def plotting():
     df5.plot(kind='line', x='index', y='mMTC_BP', ax=ax4)
     plt.xlabel('Threshold')
     plt.ylabel('Call Blocking/Dropping Probability')
-    plt.title('Effect of Increasing Threshold on InterSlice Call Blocking/Dropping Probability')
+    plt.title('Effect of Increasing Threshold on Call Blocking/Dropping Probability')
     figname = 'All graphs'
     plt.grid()
     plt.savefig(f'Results\\effect of threshold\\Inter Slice\\{figname}')
@@ -407,7 +407,7 @@ def plotting():
     df6.plot(kind='line', x='index', y='mMTC_BP', ax=ax5)
     plt.xlabel('Threshold')
     plt.ylabel('Call Blocking/Dropping Probability')
-    plt.title('Effect of Increasing Threshold on IntraSlice Call Blocking/Dropping Probability')
+    plt.title('Effect of Increasing Threshold on Call Blocking/Dropping Probability')
     figname = 'All graphs'
     plt.grid()
     plt.savefig(f'Results\\effect of threshold\\Intra Slice\\{figname}')
@@ -442,6 +442,19 @@ def plotting():
 
     # Plot eMBB BP Vs DP on the same axis
 
+    axy = plt.gca()
+
+    df7.plot(kind='line', x='index', y='eMBB_BP', ax=axy)
+    df7.plot(kind='line', x='index', y='uRLLC_BP', ax=axy)
+    df7.plot(kind='line', x='index', y='mMTC_BP', ax=axy)
+    plt.xlabel('Arrival Rate')
+    plt.ylabel('Call Blocking/Dropping Probability')
+    plt.title('Effect of Increasing Arrival Rate on Call Blocking/Dropping Probability')
+    figname = 'Intra Slice graphs'
+    plt.grid()
+    plt.savefig(f'Results/effect of arrival rate/IntraSlice/{figname}')
+    plt.close('all')
+
     axx12 = plt.gca()
     df7.plot(kind='line', x='index', y='eMBB_BP', ax=axx12)
     df7.plot(kind='line', x='index', y='eMBB_DP', ax=axx12)
@@ -475,7 +488,7 @@ def plotting():
     df7.plot(kind='line', x='index', y='mMTC_BP', ax=ax6)
     plt.xlabel('Arrival Rate')
     plt.ylabel('Call Blocking/Dropping Probability')
-    plt.title('Effect of Increasing Arrival Rate on IntraSlice Call Blocking/Dropping Probability')
+    plt.title('Effect of Increasing Arrival Rate on Call Blocking/Dropping Probability')
     figname = 'All graphs'
     plt.grid()
     plt.savefig(f'Results\\effect of arrival rate\\IntraSlice\\{figname}')
@@ -528,7 +541,7 @@ def plotting():
     df8.plot(kind='line', x='index', y='uRLLC_DP', ax=axx15)
     plt.xlabel('Arrival Rate')
     plt.ylabel('Call Blocking/Dropping Probability')
-    plt.title('Effect of Increasing Arrival Rate on InterSlice Call Blocking/Dropping Probability')
+    plt.title('Effect of Increasing Arrival Rate on Call Blocking/Dropping Probability')
     figname = 'uRLLC BP vs DP'
     plt.grid()
     plt.savefig(f'Results/effect of arrival rate/InterSlice/{figname}')
@@ -543,7 +556,7 @@ def plotting():
     df8.plot(kind='line', x='index', y='mMTC_BP', ax=ax7)
     plt.xlabel('Arrival Rate')
     plt.ylabel('Call Blocking/Dropping Probability')
-    plt.title('Effect of Increasing Arrival Rate on InterSlice Call Blocking/Dropping Probability')
+    plt.title('Effect of Increasing Arrival Rate on Call Blocking/Dropping Probability')
     figname = 'All graphs'
     plt.grid()
     plt.savefig(f'Results\\effect of arrival rate\\InterSlice\\{figname}')
@@ -611,7 +624,7 @@ def plotting():
     df9.plot(kind='line', x='index', y='mMTC_BP', ax=ax8)
     plt.xlabel('Departure Rate')
     plt.ylabel('Call Blocking/Dropping Probability')
-    plt.title('Effect of Increasing Departure Rate on IntraSlice Call Blocking/Dropping Probability')
+    plt.title('Effect of Increasing Departure Rate on Call Blocking/Dropping Probability')
     figname = 'All graphs'
     plt.grid()
     plt.savefig(f'Results\\effect of departure rate\\Intra Slice\\{figname}')
@@ -679,7 +692,7 @@ def plotting():
     df10.plot(kind='line', x='index', y='mMTC_BP', ax=ax9)
     plt.xlabel('Departure Rate')
     plt.ylabel('Call Blocking/Dropping Probability')
-    plt.title('Effect of Increasing Departure Rate on InterSlice Call Blocking/Dropping Probability')
+    plt.title('Effect of Increasing Departure Rate on Call Blocking/Dropping Probability')
     figname = 'All graphs'
     plt.grid()
     plt.savefig(f'Results\\effect of departure rate\\Inter Slice\\{figname}')
@@ -756,9 +769,11 @@ def plotting():
     a5 = plt.gca()
     df4.plot(kind='line', x='index', y='eMBB_BP', label='Intra eMBB_BP', ax=a5)
     df3.plot(kind='line', x='index', y='eMBB_BP', label='Inter eMBB_BP', ax=a5)
+    df4.plot(kind='line', x='index', y='eMBB_DP', label='Intra eMBB_DP', ax=a5)
+    df3.plot(kind='line', x='index', y='eMBB_DP', label='Inter eMBB_DP', ax=a5)
     plt.xlabel('Capacity')
-    plt.ylabel('Call Blocking Probability')
-    plt.title('Effect of Increasing Capacity on Inter and Intra Slice Blocking Probability')
+    plt.ylabel('Call Blocking/Dropping Probability')
+    plt.title('Effect of Increasing Capacity on Call Blocking/Dropping Probability')
     figname = 'effect of Capacity on Inter vs Intra eMBB Blocking Probability'
     plt.grid()
     plt.legend(loc='upper right')
@@ -782,9 +797,11 @@ def plotting():
     a7 = plt.gca()
     df4.plot(kind='line', x='index', y='uRLLC_BP', label='Intra uRLLC_BP', ax=a7)
     df3.plot(kind='line', x='index', y='uRLLC_BP', label='Inter uRLLC_BP', ax=a7)
+    df4.plot(kind='line', x='index', y='uRLLC_DP', label='Intra uRLLC_DP', ax=a7)
+    df3.plot(kind='line', x='index', y='uRLLC_DP', label='Inter uRLLC_DP', ax=a7)
     plt.xlabel('Capacity')
-    plt.ylabel('Call Blocking Probability')
-    plt.title('Effect of Increasing Capacity on Inter and Intra Slice Blocking Probability')
+    plt.ylabel('Call Blocking/Dropping Probability')
+    plt.title('Effect of Increasing Capacity on Call Blocking/Dropping Probability')
     figname = 'effect of Capacity on Inter vs Intra uRLLC Blocking Probability'
     plt.grid()
     plt.legend(loc='center right')

@@ -8,9 +8,9 @@ class IntraCalculations:
     capacity = 0
     new_thresh = 0
     handoff_thresh = 0
-    handoff_rate = 0.5
-    holding_time1 = handoff_rate + 0.5
-    holding_time2 = handoff_rate + 0.5
+    handoff_rate = np.arange(10, 20, 1)
+    holding_time1 = handoff_rate
+    holding_time2 = handoff_rate
 
     eMBB_handoff_thresh = 0
     eMBB_newcall_thresh = 0
@@ -58,9 +58,10 @@ class IntraCalculations:
         G2 = np.zeros(10)
         G3 = np.zeros(10)
         # New Call arrival rates
-        callA = np.arange(3, 8, .5)  # eMBB, uRLLC, mMTC
-        # callA = np.ones(10)
-        # callA *= 2
+        # callA = np.arange(3, 8, .5)  # eMBB, uRLLC, mMTC
+        callA = np.ones(10)
+        callA *= 2
+        callAM = callA
         # Handoff Call Arrival rates
         handA = (callA * cls.handoff_rate) / 0.5
         # Initialise Available Bandwidth
@@ -70,7 +71,7 @@ class IntraCalculations:
         handBU = np.ones(len(handA))
         newBE = np.ones(len(callA))
         handBE = np.ones(len(handA))
-        newBM = np.ones(len(callA))
+        newBM = np.ones(len(callAM))
 
         # Initialise Loads
         newL = np.ones(len(newB))
@@ -83,11 +84,11 @@ class IntraCalculations:
 
         if slice_name == 'eMBB':
             required_bbu = UseCases()
-            bbuN = required_bbu.allocate_bbu(slice_name)[0]  # new call bbU
-            bbuH = required_bbu.allocate_bbu(slice_name)[1]  # handoff call bbu
-            bbuNU = required_bbu.allocate_bbu('uRLLC')[0]
-            bbuHU = required_bbu.allocate_bbu('uRLLC')[1]
-            bbuNM = required_bbu.allocate_bbu('mMTC')
+            bbuN = required_bbu.allocate_bbu(slice_name)[0]  # eMBB new call bbU
+            bbuH = required_bbu.allocate_bbu(slice_name)[1]  # eMBB handoff call bbu
+            bbuNU = required_bbu.allocate_bbu('uRLLC')[0]  # uRLLC new call bbu
+            bbuHU = required_bbu.allocate_bbu('uRLLC')[1]  # uRLLC handoff call bbu
+            bbuNM = required_bbu.allocate_bbu('mMTC')  # mMTC bbu
 
             cls.capacity = params[0]  # slice capacity
             cls.new_thresh = params[1]  # new call threshold
@@ -101,7 +102,7 @@ class IntraCalculations:
             # Available bandwidth
             newB *= (cls.capacity / cls.capacity) * callA
             handB *= (cls.capacity / cls.capacity) * handA
-            newBM *= (cls.mMTC_capacity / cls.mMTC_capacity) * callA
+            newBM *= (cls.mMTC_capacity / cls.mMTC_capacity) * callAM
             newBU *= (cls.uRLLC_capacity / cls.uRLLC_capacity) * callA
             handBU *= (cls.uRLLC_capacity / cls.uRLLC_capacity) * handA
 
@@ -149,7 +150,6 @@ class IntraCalculations:
                                                 G1[j] = G1[j] + qn[j] + qh[j] + qh_1[j] + qn_1[j] + qn_2[j]
 
                                             # Condition for dropping handoff calls
-
                                             if (bbuN + bbuN * (newC + handC) > cls.capacity) or \
                                                     bbuN + bbuN * handC > cls.handoff_thresh:
                                                 G2[j] = G2[j] + qn[j] + qh[j] + qh_1[j] + qn_1[j] + qn_2[j]
@@ -179,7 +179,7 @@ class IntraCalculations:
             # Available bandwidth
             newB *= (cls.capacity / cls.capacity) * callA
             handB *= (cls.capacity / cls.capacity) * handA
-            newBM *= (cls.mMTC_capacity / cls.mMTC_capacity) * callA
+            newBM *= (cls.mMTC_capacity / cls.mMTC_capacity) * callAM
             newBE *= (cls.eMBB_capacity / cls.eMBB_capacity) * callA
             handBE *= (cls.eMBB_capacity / cls.eMBB_capacity) * handA
 
@@ -228,7 +228,6 @@ class IntraCalculations:
                                                 G1[j] = G1[j] + qn[j] + qh[j] + qh_1[j] + qn_1[j] + qn_2[j]
 
                                             # Condition for dropping handoff calls
-
                                             if (bbuN + bbuN * (newC + handC) > cls.capacity) or \
                                                     bbuN + bbuN * handC > cls.handoff_thresh:
                                                 G2[j] = G2[j] + qn[j] + qh[j] + qh_1[j] + qn_1[j] + qn_2[j]
@@ -257,7 +256,7 @@ class IntraCalculations:
             # Available bandwidth
             newB *= (cls.uRLLC_capacity / cls.uRLLC_capacity) * callA
             handB *= (cls.uRLLC_capacity / cls.uRLLC_capacity) * handA
-            newBM *= (cls.mMTC_capacity / cls.mMTC_capacity) * callA
+            newBM *= (cls.mMTC_capacity / cls.mMTC_capacity) * callAM
             newBE *= (cls.eMBB_capacity / cls.eMBB_capacity) * callA
             handBE *= (cls.eMBB_capacity / cls.eMBB_capacity) * handA
 
@@ -300,6 +299,7 @@ class IntraCalculations:
                                             # Normalisation Constant
                                             G[j] = G[j] + qn_2[j] + qn_1[j] + qn[j] + qh[j] + qh_1[j]
 
+                                            # Condition for dropping new calls
                                             if bbuNM + bbuNM * newCM > cls.mMTC_capacity:
                                                 G1[j] = G1[j] + qn_2[j] + qn_1[j] + qn[j] + qh[j] + qh_1[j]
                                                 k += 1
@@ -333,7 +333,10 @@ class InterCalculations(IntraCalculations):
         G3 = np.zeros(10)
 
         # New Call arrival rates
-        callA = np.arange(3, 8, .5)  # eMBB, uRLLC, mMTC
+        # callA = np.arange(3, 8, .5)  # eMBB, uRLLC, mMTC
+        callA = np.ones(10)
+        callA *= 2
+        callAM = callA + 2
         # callA = np.ones(10)
         # callA *= 2
 
@@ -347,7 +350,7 @@ class InterCalculations(IntraCalculations):
         handBU = np.ones(len(handA))
         newBE = np.ones(len(callA))
         handBE = np.ones(len(handA))
-        newBM = np.ones(len(callA))
+        newBM = np.ones(len(callAM))
 
         # Initialise Loads
         newL = np.ones(len(newB))
@@ -376,7 +379,7 @@ class InterCalculations(IntraCalculations):
             cls.eMBB_capacity = params[0] + 15
 
             # Available bandwidth
-            newB *= (cls.capacity / cls.capacity) * callA
+            newB *= (cls.capacity / cls.capacity) * callAM
             newBU *= (cls.uRLLC_capacity / cls.uRLLC_capacity) * callA
             newBE *= (cls.eMBB_capacity / cls.eMBB_capacity) * callA
             handBE *= (cls.eMBB_capacity / cls.eMBB_capacity) * handA
@@ -404,6 +407,7 @@ class InterCalculations(IntraCalculations):
                             for handCE in range(0, handNumE, 1):
                                 for handCU in range(0, handNumU, 1):
 
+                                    # Admissible state condition
                                     if (bbuNU * (newCU + handCU) + bbuNM * newCM + bbuN * (
                                             newCE + handCE) <= cls.uRLLC_capacity) and (
                                             bbuN * (newCE + handCE) + bbuNM * newCM <= cls.eMBB_capacity) and (
@@ -420,6 +424,7 @@ class InterCalculations(IntraCalculations):
                                             # Normalisation Constant
                                             G[j] = G[j] + qn[j] + qh[j] + qh_1[j] + qn_1[j] + qn_2[j]
 
+                                            # Condition for blocking new calls
                                             if (bbuNM + bbuNM * newCM > cls.capacity) and \
                                                     ((bbuNM + bbuNU * (newCU + handCU) + bbuN * (newCE + handCE) +
                                                       bbuNM * newCM > cls.uRLLC_capacity) or
@@ -453,7 +458,7 @@ class InterCalculations(IntraCalculations):
             cls.mMTC_thresh = params[1]
 
             # Available bandwidth
-            newBM *= (cls.mMTC_capacity / cls.mMTC_capacity) * callA
+            newBM *= (cls.mMTC_capacity / cls.mMTC_capacity) * callAM
             newBU *= (cls.uRLLC_capacity / cls.uRLLC_capacity) * callA
             newBE *= (cls.capacity / cls.capacity) * callA
             handBE *= (cls.capacity / cls.capacity) * handA
@@ -497,6 +502,7 @@ class InterCalculations(IntraCalculations):
                                             # Normalisation Constant
                                             G[j] = G[j] + qn[j] + qh[j] + qh_1[j] + qn_1[j] + qn_2[j]
 
+                                            # Condition for blocking new calls
                                             if ((bbuN + bbuN * (newCE + handCE) + bbuNM * newCM > cls.capacity) or
                                                 (bbuN + bbuN * newCE + bbuNM * newCM > cls.new_thresh)) and \
                                                     ((bbuN + bbuNU * (newCU + handCU) + bbuN * (newCE + handCE) +
@@ -505,6 +511,7 @@ class InterCalculations(IntraCalculations):
                                                       bbuNM * newCM > cls.uRLLC_newcall_thresh)):
                                                 G1[j] = G1[j] + qn[j] + qh[j] + qh_1[j] + qn_1[j] + qn_2[j]
 
+                                            # Condition for dropping handoff calls
                                             if (bbuN + bbuNU * (newCU + handCU) + bbuN * (newCE + handCE) +
                                                 bbuNM * newCM > cls.uRLLC_capacity) and \
                                                     (bbuN + bbuN * (newCE + handCE) + bbuNM * newCM > cls.capacity):
@@ -532,7 +539,7 @@ class InterCalculations(IntraCalculations):
             cls.mMTC_thresh = params[1]
 
             # Available bandwidth
-            newBM *= (cls.mMTC_capacity / cls.mMTC_capacity) * callA
+            newBM *= (cls.mMTC_capacity / cls.mMTC_capacity) * callAM
             newBU *= (cls.capacity / cls.capacity) * callA
             newBE *= (cls.eMBB_capacity / cls.eMBB_capacity) * callA
             handBE *= (cls.eMBB_capacity / cls.eMBB_capacity) * handA
@@ -576,6 +583,7 @@ class InterCalculations(IntraCalculations):
                                             # Normalisation Constant
                                             G[j] = G[j] + qn[j] + qh[j] + qh_1[j] + qn_1[j] + qn_2[j]
 
+                                            # condition for blocking new calls
                                             if (bbuNU + bbuNU * (newCU + handCU) + bbuNE * (newCE + handCE) +
                                                 bbuNM * newCM > cls.capacity) or \
                                                     (
@@ -583,6 +591,7 @@ class InterCalculations(IntraCalculations):
                                                             bbuNE * newCE > cls.new_thresh):
                                                 G1[j] = G1[j] + qn[j] + qh[j] + qh_1[j] + qn_1[j] + qn_2[j]
 
+                                            # condition for dropping handoff calls
                                             if (bbuNU + bbuNU * (newCU + handCU) + bbuNE * (newCE + handCE) +
                                                     bbuNM * newCM > cls.capacity):
                                                 G2[j] = G2[j] + qn[j] + qh[j] + qh_1[j] + qn_1[j] + qn_2[j]

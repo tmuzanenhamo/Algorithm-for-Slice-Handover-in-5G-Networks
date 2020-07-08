@@ -1,9 +1,9 @@
 class UseCases:
-    bbuV = 3
-    bbuS = bbuV-1
-    bbuA = bbuV-1
-    bbuAh = bbuV-1
-    bbuVh = bbuV
+    bbuV = 4  # new call bbu for eMBB
+    bbuS = bbuV - 2  # new call bbu for mMTC
+    bbuA = bbuV - 1  # new call bbu for uRLLC
+    bbuAh = bbuA  # handoff call bbu for uRLLC
+    bbuVh = bbuV  # handoff call bbu for eMBB
 
     @classmethod
     def allocate_bbu(cls, names):
@@ -14,4 +14,4 @@ class UseCases:
         elif 'uRLLC' in names:
             return cls.bbuA, cls.bbuAh
         else:
-            return 'Use Case not defined'
+            return None
