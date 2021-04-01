@@ -1,5 +1,5 @@
 # Final Year Project
-Bsc (Eng) Electrical and Computer Engineering, University of Cape Town (Passed with a Distinction (76%))
+Bsc (Eng) Electrical and Computer Engineering, University of Cape Town `Passed with a Distinction`
 ## Project Title 
 
 Design of An Algorithm for 5G Sliced Networks
